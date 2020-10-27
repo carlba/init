@@ -1,0 +1,37 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# Unix-style newlines with a newline ending every file
+[*]
+end_of_line = lf
+insert_final_newline = true
+charset = utf-8
+
+# Python
+[*.py]
+indent_style = space
+indent_size = 4
+
+# Tab indentation (no size specified)
+[Makefile]
+indent_style = tab
+
+# Matches the exact files either package.json or .travis.yml
+[{package.json,.travis.yml}]
+indent_style = space
+indent_size = 2
+
+# Postman
+[*postman*.json]
+indent_style = space
+indent_size = 4
+
+# Matches all bash scripts
+[*.sh]
+indent_style = space
+indent_size = 2
+
+# Web Development related formats
+# Based on https://google.github.io/styleguide/htmlcssguide.html
+[*.{htm,html,ejs,ts,js}]
+indent_style = space
+indent_size = 2
