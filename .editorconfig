@@ -32,6 +32,6 @@ indent_size = 2
 
 # Web Development related formats
 # Based on https://google.github.io/styleguide/htmlcssguide.html
-[*.{htm,html,ejs,ts,js}]
+[*.{htm,html,ejs,ts,js,css,scss}]
 indent_style = space
 indent_size = 2
