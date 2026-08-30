@@ -1,38 +1,36 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-sudo apt update
-sudo apt install -y git
-sudo apt install -y zsh
+case "$(uname -s)" in
+  Darwin)
+    DIST="darwin"
+    ;;
+  Linux)
+    . /etc/os-release
+    DIST="$ID"
+    ;;
+esac
 
-
-# Set default environment to zsh
-sudo chsh -s "$(command -v zsh)" "$USER"
+if [[ "$DIST" == 'debian' || "$DIST" == 'ubuntu' ]]; then
+  sudo apt update
+  sudo apt install -y git zsh
+elif [[ "$DIST" == 'darwin' ]]; then
+  brew install git zsh
+fi
 
 
 curl https://mise.run | sh
-~/.local/bin/mise use --global uv
-~/.local/bin/mise use --global python
-~/.local/bin/mise install
+eval "$($HOME/.local/bin/mise activate $(basename $SHELL))"
+mise use --global uv python gh
+mise install
 
-
-rm -rf ~/.git
-git init ~
-git -C ~ remote add origin https://github.com/carlba/dotfiles.git
-git -C ~ fetch origin
-git -C ~ checkout -t origin/main -f
-rm -rf ~/.git
-
-sudo apt install -y gh
-gh auth login --git-protocol https
-gh auth setup-git
+gh auth login --git-protocol ssh && gh auth setup-git
 
 git clone https://github.com/carlba/ansible-monorepo.git
 cd ansible-monorepo
-~/.local/bin/mise exec -- uv sync
+mise exec -- uv sync
 
-touch ~/.vault_pass.txt
-chmod 600 ~/.vault_pass.txt
+touch ~/.vault_pass.txt && chmod 600 ~/.vault_pass.txt
 
 if [ ! -s ~/.vault_pass.txt ]; then
   read -rsp "Enter ansible-vault password: " vault_pass < /dev/tty
@@ -40,5 +38,5 @@ if [ ! -s ~/.vault_pass.txt ]; then
   printf '%s' "$vault_pass" > ~/.vault_pass.txt
 fi
 
-~/.local/bin/mise exec -- uv run ansible-playbook -l malinux --tags common playbook.yml
+mise exec -- uv run ansible-playbook -l malinux --tags common playbook.yml
 
